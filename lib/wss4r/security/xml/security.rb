@@ -19,8 +19,8 @@ module WSS4R
 	def unprocess(document)
           # Is the document signed?
           #signature_element = SOAPParser.part(SOAPParser::SIGNATURE)
-          #wsse = XPath.first(document, "/soap:Envelope/soap:Header/wsse:Security", {"soap"=>Namespaces::SOAP})
-          wsse = XPath.first(document, "/env:Envelope/env:Header/wsse:Security")
+          wsse = XPath.first(document, "/soap:Envelope/soap:Header/wsse:Security", {"soap"=>Namespaces::SOAP, "wsse" => Namespaces::WSSE})
+          #wsse = XPath.first(document, "/env:Envelope/env:Header/wsse:Security")
 		
           timestamp = XPath.first(document, "/soap:Envelope/soap:Header/wsse:Security/wsu:Timestamp", {"soap"=>Namespaces::SOAP, "wsse"=>Namespaces::WSSE, "wsu"=>Namespaces::WSU})
           #TODO: check timestamp, if it exists
