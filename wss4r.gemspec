@@ -6,41 +6,42 @@ WSS4R_FILES = %w{
   gpl
   rubys
   copying
-  lib/config/config.rb
-  lib/rpc/proxy.rb
-  lib/rpc/router.rb
-  lib/rpc/wssdriver.rb
-  lib/security/crypto/certificate.rb
-  lib/security/crypto/cipher.rb
-  lib/security/crypto/hash.rb
-  lib/security/exceptions/exception.rb
-  lib/security/resolver.rb
-  lib/security/security.rb 
-  lib/security/util/hash_util.rb
-  lib/security/util/names.rb
-  lib/security/util/namespaces.rb
-  lib/security/util/soap_parser.rb
-  lib/security/util/transformer_factor.rb
-  lib/security/util/types.rb
-  lib/security/util/xmlcanconicalizer.rb
-  lib/security/util/xmlutils.rb
-  lib/security/xml/encrypted_data.rb
-  lib/security/xml/encrypted_key.rb
-  lib/security/xml/key_info.rb
-  lib/security/xml/reference.rb
-  lib/security/xml/reference_list.rb
-  lib/security/xml/security.rb
-  lib/security/xml/signature.rb
-  lib/security/xml/signature_value.rb
-  lib/security/xml/signed_info.rb
-  lib/security/xml/timestamp.rb
-  lib/security/xml/tokentypes.rb
-  lib/server/wssstandaloneserver.rb
-  lib/soap/processor.rb
-  lib/tokenresolver/authenticateuserresolver.rb
-  lib/tokenresolver/certificateresolver.rb
-  lib/tokenresolver/databaseresolver.rb
-  lib/tokenresolver/resolver.rb
+  lib/wss4r/config/config.rb
+  lib/wss4r/rpc/proxy.rb
+  lib/wss4r/rpc/router.rb
+  lib/wss4r/rpc/wssdriver.rb
+  lib/wss4r/security/crypto/certificate.rb
+  lib/wss4r/security/crypto/cipher.rb
+  lib/wss4r/security/crypto/hash.rb
+  lib/wss4r/security/exceptions/exceptions.rb
+  lib/wss4r/security/resolver.rb
+  lib/wss4r/security/security.rb 
+  lib/wss4r/security/util/hash_util.rb
+  lib/wss4r/security/util/names.rb
+  lib/wss4r/security/util/namespaces.rb
+  lib/wss4r/security/util/reference_elements.rb
+  lib/wss4r/security/util/soap_parser.rb
+  lib/wss4r/security/util/transformer_factory.rb
+  lib/wss4r/security/util/types.rb
+  lib/wss4r/security/util/xmlcanonicalizer.rb
+  lib/wss4r/security/util/xmlutils.rb
+  lib/wss4r/security/xml/encrypted_data.rb
+  lib/wss4r/security/xml/encrypted_key.rb
+  lib/wss4r/security/xml/key_info.rb
+  lib/wss4r/security/xml/reference.rb
+  lib/wss4r/security/xml/reference_list.rb
+  lib/wss4r/security/xml/security.rb
+  lib/wss4r/security/xml/signature.rb
+  lib/wss4r/security/xml/signature_value.rb
+  lib/wss4r/security/xml/signed_info.rb
+  lib/wss4r/security/xml/timestamp.rb
+  lib/wss4r/security/xml/tokentypes.rb
+  lib/wss4r/server/wssstandaloneserver.rb
+  lib/wss4r/soap/processor.rb
+  lib/wss4r/tokenresolver/authenticateuserresolver.rb
+  lib/wss4r/tokenresolver/certificateresolver.rb
+  lib/wss4r/tokenresolver/databaseresolver.rb
+  lib/wss4r/tokenresolver/resolver.rb
   util/create_x509cert.rb
   util/DumpPrivateKey.class
   util/encrypt_xml.rb
@@ -48,12 +49,13 @@ WSS4R_FILES = %w{
   util/xmlsec-verify.bat
   xml/out.xml
   xml/wse-encrypted-signed.xml
+  xml/wse-signed-encrypted.xml
   xml/wse-signed.xml
   xml/wse-usernametoken-sign.xml
   xml/wse-usernametoken.xml
   xml/wss4r-encrypted-signed.xml
   xml/wss4r-encrypted.xml
-  xml/ws4r-plain.xml
+  xml/wss4r-plain.xml
   xml/wss4r-signed-encrypted.xml
   xml/wss4r-signed.xml
   xml/wss4r-usernametoken.xml
