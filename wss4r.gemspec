@@ -15,7 +15,7 @@ WSS4R_FILES = %w{
   lib/wss4r/security/crypto/hash.rb
   lib/wss4r/security/exceptions/exceptions.rb
   lib/wss4r/security/resolver.rb
-  lib/wss4r/security/security.rb 
+  lib/wss4r/security/security.rb
   lib/wss4r/security/util/hash_util.rb
   lib/wss4r/security/util/names.rb
   lib/wss4r/security/util/namespaces.rb
@@ -70,16 +70,16 @@ WSS4R_FILES = %w{
 
 Gem::Specification.new do |s|
   s.name = "wss4r"
-  s.version = "0.5.1"
+  s.version = "0.5.1.sermo"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Roland Schmitt"]
 
   s.date = "2005-12-22"
   s.description = "Partial implementation of some of the WS-Security standards on top of SOAP4R."
-  
+
   s.files = WSS4R_FILES
-  
+
   s.has_rdoc = false
   s.homepage = "http://rubyforge.org/projects/wss4r/"
   s.require_paths = ["lib", "xml"]
