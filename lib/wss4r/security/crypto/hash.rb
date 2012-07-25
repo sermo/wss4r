@@ -1,6 +1,6 @@
 require "openssl"
 include OpenSSL
-include OpenSSL::Digest
+#include OpenSSL::Digest
 
 
 module WSS4R
@@ -13,17 +13,17 @@ module WSS4R
           @digest = SHA1.new() if (type == "SHA1")
           @digest = MD5.new()  if (type == "MD5")
 	end
-	
+
 	def digest(value)
           @digest.update(value)
           return @digest.digest()
 	end
-	
+
 	def digest_b64(value)
           digest = self.digest(value)
           return Base64.encode64(digest)
 	end
-	
+
 	def to_s()
           return @digest.to_s()
 	end

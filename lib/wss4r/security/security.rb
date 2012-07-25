@@ -36,8 +36,8 @@ include SOAP
 
 include OpenSSL
 include OpenSSL::X509
-include OpenSSL::Digest
-include OpenSSL::Cipher
+#include OpenSSL::Digest
+#include OpenSSL::Cipher
 include OpenSSL::PKey
 
 include WSS4R::Security::Xml
@@ -48,40 +48,40 @@ include WSS4R::Security::Exceptions
 
 module WSS4R
   module Security
-    
+
     class Security
       attr_reader :tokens
-		 
+
       @@resolver = Resolver.new()
-		 
+
       def initialize()
         @tokens = Array.new()
       end
-		
+
       def add_security_token(token)
         @tokens.push(token)
       end
-      
+
       def add_security_resolver(resolver)
         @@resolver.push(resolver)
-      end 
-      
+      end
+
       def clear_resolver!()
         @@resolver.clear()
       end
-      
+
       def clear_tokens!()
         @tokens.clear()
       end
-      
+
       def resolver()
         @@resolver
       end
-			
+
       def process_document_marshal(document)
         return if (@tokens.size() == 0)
         SOAPParser.document=(document)
-        
+
         document.root.add_namespace("xmlns:wsu", Namespaces::WSU)
         document.root.add_namespace("xmlns:wsse", Namespaces::WSSE)
         document.root.add_namespace("xmlns:wsa", Namespaces::WSA)
@@ -105,13 +105,13 @@ module WSS4R
         SOAPParser::soap_prefix=(soap_prefix)
 
         soap_body = XPath.first(document, "/env:Envelope/env:Body", {SOAPParser::soap_prefix => SOAPParser::soap_ns})
-		  
+
         #soap_body = XPath.first(document, soap_prefix+":Envelope/"+soap_prefix+":Body")
         #soap_body = SOAPParser.part(SOAPParser::BODY)
-        return if !soap_body 
+        return if !soap_body
         root.delete_element(soap_body)
         soap_header = SOAPParser.part(SOAPParser::HEADER)
-        if (soap_header == nil) 
+        if (soap_header == nil)
           soap_header = root.add_element(Names::HEADER)
         end
         root.add_element(soap_body)
@@ -137,12 +137,12 @@ module WSS4R
           security.add_element(child)
         }
       end
-      
+
       def process_document_unmarshal(document)
         security = WSS4R::Security::Xml::Security.new()
         security.unprocess(document)
       end
     end
-    
+
   end #Security
 end #WSS4R
