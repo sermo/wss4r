@@ -4,23 +4,23 @@ module WSS4R
 
       class EncryptedData
         attr_accessor :cipher_value, :ref_id, :algorithm, :sessionkey_algorithm, :security_token
-	
+
         def initialize(security_token=nil)
           if (security_token != nil)
             @security_token = security_token
           end
           @sessionkey_algorithm = Types::ALGORITHM_3DES_CBC
         end
-   
+
         def unprocess(encrypted_data)
-          cipher_value = XPath.first(encrypted_data, "xenc:CipherData/xenc:CipherValue", {"xenc" => Namespaces::XENC})
-          algorithm = XPath.first(encrypted_data, "xenc:EncryptionMethod", {"xenc" => Namespaces::XENC})
+          cipher_value = REXML::XPath.first(encrypted_data, "xenc:CipherData/xenc:CipherValue", {"xenc" => Namespaces::XENC})
+          algorithm = REXML::XPath.first(encrypted_data, "xenc:EncryptionMethod", {"xenc" => Namespaces::XENC})
           ref_id = encrypted_data.attributes["Id"]
           self.cipher_value=(cipher_value.text())
           self.ref_id=(ref_id)
           self.algorithm=(algorithm.attributes["Algorithm"])
         end
-   
+
         def process(document)
           root = document.root()
           soap_ns = nil
@@ -33,20 +33,20 @@ module WSS4R
               soap_ns = Namespaces::S12
             end
           }
-          old_soap_body = XPath.first(document, "/env:Envelope/env:Body", {SOAPParser::soap_prefix=>SOAPParser::soap_ns})
+          old_soap_body = REXML::XPath.first(document, "/env:Envelope/env:Body", {SOAPParser::soap_prefix=>SOAPParser::soap_ns})
           #old_soap_body = SOAPParser.part(SOAPParser::BODY)
 
           soap_body_string = ""
           if defined?(REXML::Formatters)
             formatter = REXML::Formatters::Default.new
-            old_soap_body.each_element(){|e|            
+            old_soap_body.each_element(){|e|
               formatter.write(e, soap_body_string)
             }
           else
-            old_soap_body.each_element(){|e|            
+            old_soap_body.each_element(){|e|
               e.write(soap_body_string)
             }
-          end                        
+          end
           root.delete(old_soap_body)
           soap_body = root.add_element(Names::BODY)
           old_soap_body.attributes().each_attribute{|a|
@@ -64,7 +64,7 @@ module WSS4R
           elsif (@sessionkey_algorithm == Types::ALGORITHM_AES_CBC)
             symmetric_encrypter = AESSymmetricEncrypter.new()
           elsif (@sessionkey_algorithm == Types::ALGORITHM_AES128_CBC)
-            symmetric_encrypter = AES128SymmetricEncrypter.new()            
+            symmetric_encrypter = AES128SymmetricEncrypter.new()
           else
             raise "Unsupported encryption algorithm #{@sessionkey_algorithm}"
           end
@@ -75,11 +75,11 @@ module WSS4R
           cipher_data = encrypted_data.add_element(Names::CIPHER_DATA)
           cipher_value = cipher_data.add_element(Names::CIPHER_VALUE)
           cipher_value.text=(encrypted_body.gsub("\n",""))
-          encrypted_key.process(document)      
+          encrypted_key.process(document)
         end
-   
+
         def decrypt(document, encrypted_key)
-          if (algorithm == Types::ALGORITHM_3DES_CBC) 
+          if (algorithm == Types::ALGORITHM_3DES_CBC)
             symmetric_encrypter = TripleDESSymmetricEncrypter.new(encrypted_key.symmetric_key())
           elsif (algorithm == Types::ALGORITHM_AES_CBC)
             symmetric_encrypter = AESSymmetricEncrypter.new(encrypted_key.symmetric_key())
@@ -91,15 +91,15 @@ module WSS4R
           raw_data = Base64.decode64(@cipher_value)
           symmetric_encrypter.iv=(raw_data)
           decrypted_element = symmetric_encrypter.decrypt(raw_data)
-          reference = encrypted_key.reference_list().uris()[0]		
+          reference = encrypted_key.reference_list().uris()[0]
           reference = reference[1..-1] # remove leading #
-          encrypted_element = XPath.first(document, "//*[@Id='"+reference+"']")
+          encrypted_element = REXML::XPath.first(document, "//*[@Id='"+reference+"']")
           parent = encrypted_element.parent()
-		
+
           #document.root().delete_element("//" + Names::SECURITY)
           parent.delete(encrypted_element)
-		
-          new_element = Document.new(decrypted_element)
+
+          new_element = REXML::Document.new(decrypted_element)
           parent.add(new_element)
           #puts("encrypted_data.decrypt: " + element.to_s())
         end

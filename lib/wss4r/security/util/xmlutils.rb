@@ -14,7 +14,7 @@ end
 class REXML::Document
 	def select(xpath)
 		#XPath.first(document, "/env:Envelope/env:Header/wsse:Security/ds:Signature")
-		element = XPath.first(self, xpath)
+		element = REXML::XPath.first(self, xpath)
 		if (element != nil)
 			return element
 		end

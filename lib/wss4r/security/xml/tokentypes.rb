@@ -14,7 +14,7 @@ module WSS4R
       class X509SecurityToken < BinarySecurityToken
         attr_reader :certificate
         attr_accessor :private_key
-	
+
         def initialize(x509certificate, private_key = nil)
           if (x509certificate.kind_of?(Certificate))
             @certificate = x509certificate
@@ -23,21 +23,21 @@ module WSS4R
           end
           @private_key = private_key
         end
-   
+
         def process(document)
-          e = Element.new(Names::BINARY_SECURITY_TOKEN)
+          e = REXML::Element.new(Names::BINARY_SECURITY_TOKEN)
           e.add_namespace("xmlns:wsu", Namespaces::WSU)
           der_certificate_string = Base64.encode64(@certificate.to_der())
           der_certificate_string.delete!("\n\r")
 
           e.add_text(der_certificate_string)
           e.add_attribute("wsu:Id", get_id())
-		
+
           e.add_attribute("ValueType", Types::REFERENCE_VALUETYPE_X509)
           e.add_attribute("EncodingType", Types::ENCODING_X509V3)
           return e
         end
-   
+
         def get_id()
           unless @id
             @id = Crypto::CryptHash.new().digest_b64(@certificate.public_key().to_s()+Time.new().to_s()).to_s().strip()
@@ -57,31 +57,31 @@ module WSS4R
         def key_identifier=(id)
           @key_identifier = id
         end
-	
+
         def public_encrypt_b64(text)
           ciphervalue = @certificate.public_key().public_encrypt(text)
           return Base64.encode64(ciphervalue)
         end
-   
+
         def private_decrypt_b64(text)
           @private_key.private_decrypt(Base64.decode64(text.strip()))
         end
-   
+
         def serial_number()
           @certificate.serial()
         end
-   
+
         def get_issuer_name()
           @certificate.issuer()
         end
-   
+
         def sign_b64(to_sign)
           plain_signature = @private_key.sign(OpenSSL::Digest::SHA1.new(), to_sign)
           signature = Base64.encode64(plain_signature)
           signature.strip!
           signature
         end
-	
+
         def public_key()
           return @certificate.public_key()
         end
@@ -91,29 +91,29 @@ module WSS4R
         PLAIN = "PLAIN"
         HASHED = "HASHED"
         attr_accessor :username, :password, :type, :nonce, :created, :hash, :type
-	
+
         def initialize(username = nil, password = nil, type = HASHED)
           @username = username
           @password = password
           @type = type
         end
-	
+
         def unprocess(usernametoken)
-          @username = XPath.first(usernametoken, "wsse:Username", {"wsse"=>Namespaces::WSSE}).text()
-          @password = XPath.first(usernametoken, "wsse:Password", {"wsse"=>Namespaces::WSSE}).text()
-          password_type = XPath.first(usernametoken, "wsse:Password", {"wsse"=>Namespaces::WSSE}).attribute("Type").value()
+          @username = REXML::XPath.first(usernametoken, "wsse:Username", {"wsse"=>Namespaces::WSSE}).text()
+          @password = REXML::XPath.first(usernametoken, "wsse:Password", {"wsse"=>Namespaces::WSSE}).text()
+          password_type = REXML::XPath.first(usernametoken, "wsse:Password", {"wsse"=>Namespaces::WSSE}).attribute("Type").value()
           if password_type == Types::PASSWORD_DIGEST
             @type = HASHED
-            @nonce    = XPath.first(usernametoken, "wsse:Nonce", {"wsse"=>Namespaces::WSSE}).text()
-            @created  = XPath.first(usernametoken, "wsu:Created", {"wsu"=>Namespaces::WSU}).text()
-          else 
+            @nonce    = REXML::XPath.first(usernametoken, "wsse:Nonce", {"wsse"=>Namespaces::WSSE}).text()
+            @created  = REXML::XPath.first(usernametoken, "wsu:Created", {"wsu"=>Namespaces::WSU}).text()
+          else
             @type = PLAIN
           end
           @hash = @password
         end
-	
+
         def process(document)
-          wsse_security = XPath.first(document, "/env:Envelope/env:Header/wsse:Security")
+          wsse_security = REXML::XPath.first(document, "/env:Envelope/env:Header/wsse:Security")
           username_token = wsse_security.add_element("wsse:UsernameToken")
           username_token.add_namespace("xmlns:wsu", Namespaces::WSU)
           username_token.add_attribute("wsu:Id", "SecurityToken-" + username_token.object_id().to_s())
@@ -129,7 +129,7 @@ module WSS4R
             #Solution--------------------------------------------------
             created = username_token.add_element("wsu:Created")
             created_time = Time.new.getutc()
-            #created_time = (Time.new()-(60*60*1)).getutc.iso8601()	
+            #created_time = (Time.new()-(60*60*1)).getutc.iso8601()
             #----------------------------------------------------------
             created.text=(created_time)
 
@@ -145,13 +145,13 @@ module WSS4R
             password.add_attribute("Type", Types::PASSWORD_TEXT)
             password.text=@password
           end
-		
+
           # BUG #5877 -----------------------------------------------
           #created_time = (Time.new()-(60*60*1)).iso8601()
           #created_time = created_time[0..created_time.index("+")]
           #created_time[-1]="Z"
           #----------------------------------------------------------
-		
+
         end
       end
 
@@ -165,16 +165,16 @@ if __FILE__ == $0
   require "pp"
   require "wss4r/rpc/wssdriver"
   include REXML
-  document = Document.new(File.new(ARGV[1]))
+  document = REXML::Document.new(File.new(ARGV[1]))
   if ARGV[0] == "p"
     usernametoken = WSS4R::Security::Xml::UsernameToken.new("Ron","noR")
     usernametoken.process(document)
     pp(document.to_s())
   else
-    element = XPath.match(document, "/soap:Envelope/soap:Header/wsse:Security/wsse:UsernameToken")[0]
+    element = REXML::XPath.match(document, "/soap:Envelope/soap:Header/wsse:Security/wsse:UsernameToken")[0]
     usernametoken = WSS4R::Security::Xml::UsernameToken.new()
     usernametoken.unprocess(element)
   end
 end
-	
-	
+
+

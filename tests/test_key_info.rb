@@ -11,7 +11,7 @@ include OpenSSL
 
 x509 = X509SecurityToken.new(OpenSSL::X509::Certificate.new(File.new(ARGV[1])))
 
-doc = Document.new(File.new(ARGV[0]))
+doc = REXML::Document.new(File.new(ARGV[0]))
 key_info = KeyInfo.new(x509, KeyInfo::REFERENCE)
 signature_element = doc.select(doc, "/env:Envelope/env:Header/wsse:Security")
 key_info.get_xml(signature_element)

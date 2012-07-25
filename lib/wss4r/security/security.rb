@@ -104,9 +104,9 @@ module WSS4R
         SOAPParser::soap_ns=(soap_ns)
         SOAPParser::soap_prefix=(soap_prefix)
 
-        soap_body = XPath.first(document, "/env:Envelope/env:Body", {SOAPParser::soap_prefix => SOAPParser::soap_ns})
+        soap_body = REXML::XPath.first(document, "/env:Envelope/env:Body", {SOAPParser::soap_prefix => SOAPParser::soap_ns})
 
-        #soap_body = XPath.first(document, soap_prefix+":Envelope/"+soap_prefix+":Body")
+        #soap_body = REXML::XPath.first(document, soap_prefix+":Envelope/"+soap_prefix+":Body")
         #soap_body = SOAPParser.part(SOAPParser::BODY)
         return if !soap_body
         root.delete_element(soap_body)
@@ -123,8 +123,8 @@ module WSS4R
           token.process(document)
         }
         ####Sort
-        security = XPath.first(root, "/env:Envelope/env:Header/wsse:Security")#, {SOAPParser::soap_prefix=>SOAPParser::soap_ns})
-        timestamp = XPath.first(security, "wsu:Timestamp")
+        security = REXML::XPath.first(root, "/env:Envelope/env:Header/wsse:Security")#, {SOAPParser::soap_prefix=>SOAPParser::soap_ns})
+        timestamp = REXML::XPath.first(security, "wsu:Timestamp")
         @t = timestamp
         @s = security
         children = security.children()

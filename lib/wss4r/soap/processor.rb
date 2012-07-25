@@ -22,13 +22,13 @@ module SOAP
       end
     end
   end
-	
+
   module Processor
     class << self
-      public 
+      public
       alias old_marshal marshal
       alias old_unmarshal unmarshal
-			
+
       def security=(s)
         @@security = s
       end
@@ -36,7 +36,7 @@ module SOAP
         @@security = WSS4R::Security::Security.new() if (!defined?(@@security))
         @@security
       end
-			
+
       def config()
         store = WSS4R::Config::Store.new()
         config = store.load()
@@ -45,7 +45,7 @@ module SOAP
           config.build_security(@security)
         end
       end
-			
+
       def marshal(env,opt = {}, io = nil)
         #config()
         xml = Processor.old_marshal(env, opt, io)
@@ -54,20 +54,20 @@ module SOAP
         if (defined?(@@security) && @@security != nil)
           security = @@security if (@@security)
         end
-        document = Document.new(xml)
+        document = REXML::Document.new(xml)
         if (security != nil)
           security.process_document_marshal(document)
         end
         document.to_s()
       end
-         
+
       def unmarshal(stream, opt = {})
         #config()
-        security = opt[:security] 
+        security = opt[:security]
         if (defined?(@@security) && @@security != nil)
           security = @@security if (@@security)
         end
-        doc = Document.new(stream)
+        doc = REXML::Document.new(stream)
         if (security != nil)
           SOAPParser::document=(doc)
           soap_ns = doc.root().prefix()

@@ -13,7 +13,7 @@ class REXML::Element
 	end
 end
 
-doc = Document.new()
+doc = REXML::Document.new()
 root = doc.add_element("root")
 eins = root.add_element("eins")
 zwei = root.add_element("zwei")
@@ -24,5 +24,5 @@ drei_drei = drei.add_element("drei-drei")
 
 
 
-e = XPath.first(root, "zwei")
+e = REXML::XPath.first(root, "zwei")
 breakpoint

@@ -129,11 +129,11 @@ module WSS4R
           @preserve_document = element.document()
           tmp_parent = element.parent()
           body_string = remove_whitespace(element.to_s().gsub("\n","").gsub("\t","").gsub("\r",""))
-          document = Document.new(body_string)
+          document = REXML::Document.new(body_string)
           tmp_parent.delete_element(element)
           element = tmp_parent.add_element(document.root())
           @preserve_element = element
-          document = Document.new(element.to_s())
+          document = REXML::Document.new(element.to_s())
           ns = element.namespace(element.prefix())
           document.root().add_namespace(element.prefix(), ns)
           write_document_node(document)
@@ -398,15 +398,15 @@ end #WSS4R
 
 
 if __FILE__ == $0
-  document = Document.new(File.new(ARGV[0]))
+  document = REXML::Document.new(File.new(ARGV[0]))
   body = nil
   c = WSS4R::Security::Util::XmlCanonicalizer.new(false, true)
 
   if (ARGV.size() == 3)
     body = ARGV[2]
     if (body == "true")
-      element = XPath.match(document, "/soap:Envelope/soap:Body")[0]
-      element = XPath.first(document, "/soap:Envelope/soap:Header/wsse:Security/Signature/SignedInfo")
+      element = REXML::XPath.match(document, "/soap:Envelope/soap:Body")[0]
+      element = REXML::XPath.first(document, "/soap:Envelope/soap:Header/wsse:Security/Signature/SignedInfo")
       result = c.canonicalize_element(element)
       puts("-----")
       puts(result)

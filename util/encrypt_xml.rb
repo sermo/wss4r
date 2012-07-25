@@ -9,23 +9,23 @@ include Cipher
 
 class DecryptXML
   def initialize(filename)
-    doc = Document.new(File.read(filename))
-    element = XPath.first(doc, "/soap:Envelope/soap:Header/wsse:Security/wsse:BinarySecurityToken")
+    doc = REXML::Document.new(File.read(filename))
+    element = REXML::XPath.first(doc, "/soap:Envelope/soap:Header/wsse:Security/wsse:BinarySecurityToken")
     @cert = Certificate.new(decode64(element.text()))
 
-    element = XPath.first(doc, "/soap:Envelope/soap:Header/wsse:Security")
-    element1 = XPath.first(element,"xenc:EncryptedKey")
-    element2 = XPath.first(element, "wsse:BinarySecurityToken")
+    element = REXML::XPath.first(doc, "/soap:Envelope/soap:Header/wsse:Security")
+    element1 = REXML::XPath.first(element,"xenc:EncryptedKey")
+    element2 = REXML::XPath.first(element, "wsse:BinarySecurityToken")
 
     #Hack!----
-    nodes = XPath.match(doc, "/soap:Envelope/soap:Header/wsse:Security/*")
+    nodes = REXML::XPath.match(doc, "/soap:Envelope/soap:Header/wsse:Security/*")
     encrypted_key = nodes[1]
     cipher_value = encrypted_key.elements["xenc:CipherData"].elements["xenc:CipherValue"].text()
     @rsa_3des_key = decode64(cipher_value)
     #----------------------------------------------------------------------------
-    encrypted_body = XPath.first(doc, "/soap:Envelope/soap:Body/xenc:EncryptedData/xenc:CipherData/xenc:CipherValue")
+    encrypted_body = REXML::XPath.first(doc, "/soap:Envelope/soap:Body/xenc:EncryptedData/xenc:CipherData/xenc:CipherValue")
     @des_cipher = decode64(encrypted_body.text())
-    
+
     puts("\nCertiticate:\n",@cert.to_text(),"\n")
     puts("\nRSA-3DES-Key:\n",@rsa_3des_key,"\n")
     puts("\n3DES-Cipher: \n",@des_cipher,"\n")

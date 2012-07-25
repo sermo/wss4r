@@ -1,7 +1,7 @@
 module WSS4R
 module Security
 module Xml
-	
+
 class KeyInfo
 	attr_accessor :security_token, :type, :key_identifier
 
@@ -10,21 +10,21 @@ class KeyInfo
 
 	def initialize(p, *type)
 		if (p.kind_of?(SecurityToken))
-			@security_token = p                                 
+			@security_token = p
 			if (type != nil)
-				@type = type 
+				@type = type
 			else
 				@type = KEY_IDENTIFIER
 			end
 		else
-			reference = XPath.first(p, "wsse:SecurityTokenReference/wsse:Reference", {"wsse" => Namespaces::WSSE})
+			reference = REXML::XPath.first(p, "wsse:SecurityTokenReference/wsse:Reference", {"wsse" => Namespaces::WSSE})
 			@uri = reference.attribute("URI").value()[1..-1]
 			@value_type = reference.attribute("ValueType").value()
-			@ref_element = XPath.first(p.document(), "//*[@wsu:Id='"+@uri+"']")
+			@ref_element = REXML::XPath.first(p.document(), "//*[@wsu:Id='"+@uri+"']")
 			@security_token = X509SecurityToken.new(@ref_element.text())
 		end
 	end
-	
+
 	def get_xml(parent)
 		key_info = parent.add_element(Names::KEY_INFO)
 		security_token_ref = key_info.add_element(Names::SECURITY_TOKEN_REFERENCE)
@@ -44,7 +44,7 @@ class KeyInfo
 		parent
 	end
 
-	
+
 end
 
 end #Xml

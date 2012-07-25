@@ -10,13 +10,13 @@ require "wss4r/security/xml/tokentypes"
 include WSS4R::Security::Util
 include WSS4R::Security::Xml
 
-document = Document.new(File.new(ARGV[0]))
+document = REXML::Document.new(File.new(ARGV[0]))
 type = ARGV[1]
 
-element = XPath.match(document, "/env:Envelope/env:Body")[0] if (type == "body")
-element = XPath.match(document, "/child::env:Envelope/child::env:Header/child::wsse:Security/child::wsu:Timestamp")[0] if (type == "timestamp")
-#element = XPath.match(document, "/child::env:Envelope/child::env:Header/child::wsse:Security")[0][1][1] if (type=="signed_info") #für XWS
-element = XPath.match(document, "/child::env:Envelope/child::env:Header/child::wsse:Security")[0][1][0] if (type=="signed_info") #für WSS4R
+element = REXML::XPath.match(document, "/env:Envelope/env:Body")[0] if (type == "body")
+element = REXML::XPath.match(document, "/child::env:Envelope/child::env:Header/child::wsse:Security/child::wsu:Timestamp")[0] if (type == "timestamp")
+#element = REXML::XPath.match(document, "/child::env:Envelope/child::env:Header/child::wsse:Security")[0][1][1] if (type=="signed_info") #für XWS
+element = REXML::XPath.match(document, "/child::env:Envelope/child::env:Header/child::wsse:Security")[0][1][0] if (type=="signed_info") #für WSS4R
 #breakpoint
 
 f=File.new("out-before-ruby.xml","wb")
