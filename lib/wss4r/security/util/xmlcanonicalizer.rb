@@ -1,12 +1,10 @@
 require "rexml/document"
 require "base64"
 
-include REXML
-
 module WSS4R
   module Security
     module Util
-      
+
       class REXML::Instruction
         def write(writer, indent=-1, transitive=false, ie_hack=false)
           indent(writer, indent)
@@ -17,7 +15,7 @@ module WSS4R
           writer << STOP.sub(/\\/u, '')
         end
       end
-      
+
       class REXML::Attribute
         def <=>(a2)
           if (self === a2)
@@ -41,7 +39,7 @@ module WSS4R
           return ret
         end
       end
-      
+
       class REXML::Element
         def search_namespace(prefix)
           if (self.namespace(prefix) == nil)
@@ -70,29 +68,29 @@ module WSS4R
           ns
         end
       end
-      
+
       class NamespaceNode
-        attr_reader :prefix, :uri	
+        attr_reader :prefix, :uri
         def initialize(prefix, uri)
           @prefix = prefix
           @uri = uri
         end
       end
-      
+
       class XmlCanonicalizer
         attr_accessor :prefix_list
-        
+
         BEFORE_DOC_ELEMENT = 0
         INSIDE_DOC_ELEMENT = 1
         AFTER_DOC_ELEMENT  = 2
-        
+
         NODE_TYPE_ATTRIBUTE  = 3
         NODE_TYPE_WHITESPACE = 4
         NODE_TYPE_COMMENT    = 5
         NODE_TYPE_PI         = 6
         NODE_TYPE_TEXT       = 7
-        
-        
+
+
         def initialize(with_comments, excl_c14n)
           @with_comments = with_comments
           @exclusive = excl_c14n
@@ -106,7 +104,7 @@ module WSS4R
           @prefix_list = nil
 			 @rendered_prefixes = Array.new()
         end
-        
+
         def add_inclusive_namespaces(prefix_list, element, visible_namespaces)
           namespaces = element.attributes()
           namespaces.each_attribute{|ns|
@@ -120,12 +118,12 @@ module WSS4R
           add_inclusive_namespaces(prefix_list, parent, visible_namespaces) if (parent)
           visible_namespaces
         end
-        
+
         def canonicalize(document)
           write_document_node(document)
           @res
         end
-        
+
         def canonicalize_element(element)
           @inclusive_namespaces = add_inclusive_namespaces(@prefix_list, element, @inclusive_namespaces) if (@prefix_list)
           @preserve_document = element.document()
@@ -141,7 +139,7 @@ module WSS4R
           write_document_node(document)
           @res
         end
-        
+
         def write_document_node(document)
           @state = BEFORE_DOC_ELEMENT
           if (document.class().to_s() == "REXML::Element")
@@ -153,7 +151,7 @@ module WSS4R
           end
           @res
         end
-        
+
         def write_node(node)
           visible = is_node_visible(node)
           if ((node.node_type() == :text) && white_text?(node.value()))
@@ -168,7 +166,7 @@ module WSS4R
           if (node.node_type() == :text)
             write_text_node(node, visible)
             return
-          end		
+          end
           if (node.node_type() == :element)
             write_element_node(node, visible) if (!node.rendered?())
 				node.rendered=(true)
@@ -178,7 +176,7 @@ module WSS4R
           if (node.node_type() == :comment)
           end
         end
-        
+
         def write_element_node(node, visible)
           savedPrevVisibleNamespacesStart = @prevVisibleNamespacesStart
           savedPrevVisibleNamespacesEnd = @prevVisibleNamespacesEnd
@@ -198,16 +196,16 @@ module WSS4R
           @prevVisibleNamespacesEnd = savedPrevVisibleNamespacesEnd
           @visibleNamespaces.slice!(savedVisibleNamespacesSize, @visibleNamespaces.size() - savedVisibleNamespacesSize) 		if (@visibleNamespaces.size() > savedVisibleNamespacesSize)
         end
-        
+
         def write_namespace_axis(node, visible)
           doc = node.document()
           has_empty_namespace = false
           list = Array.new()
           cur = node
-          #while ((cur != nil) && (cur != doc) && (cur.node_type() != :document)) 
+          #while ((cur != nil) && (cur != doc) && (cur.node_type() != :document))
           namespaces = cur.node_namespaces()
           namespaces.each{|prefix|
-            next if ((prefix == "xmlns") && (node.namespace(prefix) == "")) 
+            next if ((prefix == "xmlns") && (node.namespace(prefix) == ""))
             namespace = cur.namespace(prefix)
             next if (is_namespace_node(namespace))
             next if (node.namespace(prefix) != cur.namespace(prefix))
@@ -220,7 +218,7 @@ module WSS4R
             end
             has_empty_namespace = true if (prefix == nil)
           }
-          if (visible && !has_empty_namespace && !is_namespace_rendered(nil, nil)) 
+          if (visible && !has_empty_namespace && !is_namespace_rendered(nil, nil))
             @res = @res + ' xmlns=""'
           end
           #TODO: ns of inclusive_list
@@ -229,7 +227,7 @@ module WSS4R
             #list.push(node.prefix())
             @inclusive_namespaces.each{|ns|
               prefix = ns.prefix().split(":")[1]
-              list.push(prefix) if (!list.include?(prefix) && (!node.attributes.prefixes.include?(prefix))) 
+              list.push(prefix) if (!list.include?(prefix) && (!node.attributes.prefixes.include?(prefix)))
             }
 				@prefix_list = nil
           end
@@ -246,10 +244,10 @@ module WSS4R
           }
           if (visible)
             @prevVisibleNamespacesStart = @prevVisibleNamespacesEnd
-            @prevVisibleNamespacesEnd = @visibleNamespaces.size()	
+            @prevVisibleNamespacesEnd = @visibleNamespaces.size()
           end
         end
-        
+
         def write_attribute_axis(node)
           list = Array.new()
           #node.attributes().each_attribute{|attr|
@@ -290,11 +288,11 @@ module WSS4R
             end
           }
         end
-        
+
         def is_namespace_node(namespace_uri)
           return (namespace_uri == "http://www.w3.org/2000/xmlns/")
         end
-        
+
         def is_namespace_rendered(prefix, uri)
           is_empty_ns = prefix == nil && uri == nil
           if (is_empty_ns)
@@ -311,12 +309,12 @@ module WSS4R
           #(@visibleNamespaces.size()-1).downto(start) {|i|
           #   ns = @visibleNamespaces[i]
           #	return true if (ns.prefix() == "xmlns:"+prefix.to_s() && ns.uri() == uri)
-          #	#p = ns.prefix() if (ns.prefix().index("xmlns") == 0) 
-          #	#return ns.uri() == uri if (p == prefix) 
+          #	#p = ns.prefix() if (ns.prefix().index("xmlns") == 0)
+          #	#return ns.uri() == uri if (p == prefix)
           #}
           #return is_empty_ns
         end
-        
+
         def is_node_visible(node)
           return true if (@xnl.size() == 0)
           @xnl.each{|element|
@@ -324,7 +322,7 @@ module WSS4R
           }
           return false
         end
-        
+
         def normalize_string(input, type)
           sb = ""
           return input
@@ -352,29 +350,29 @@ module WSS4R
         #}
         #sb
         #end
-        
+
         def write_text_node(node, visible)
           if (visible)
             @res = @res + normalize_string(node.value(), node.node_type())
           end
         end
-        
+
         def white_text?(text)
           return true if ((text.strip() == "") || (text.strip() == nil))
           return false
         end
-        
+
         def is_namespace_decl(attribute)
           #return true if (attribute.name() == "xmlns")
           return true if (attribute.prefix().index("xmlns") == 0)
           return false
         end
-        
+
         def is_text_node(type)
           return true if (type == NODE_TYPE_TEXT || type == NODE_TYPE_CDATA || type == NODE_TYPE_WHITESPACE)
           return false
         end
-        
+
         def remove_whitespace(string)
           new_string = ""
           in_white = false
@@ -403,8 +401,8 @@ if __FILE__ == $0
   document = Document.new(File.new(ARGV[0]))
   body = nil
   c = WSS4R::Security::Util::XmlCanonicalizer.new(false, true)
-  
-  if (ARGV.size() == 3) 
+
+  if (ARGV.size() == 3)
     body = ARGV[2]
     if (body == "true")
       element = XPath.match(document, "/soap:Envelope/soap:Body")[0]
@@ -413,14 +411,14 @@ if __FILE__ == $0
       puts("-----")
       puts(result)
       puts("-----")
-      puts(result.size())			
+      puts(result.size())
       puts("-----")
       puts(CryptHash.new().digest_b64(result))
     end
-  else 
+  else
     result = c.canonicalize(document)
   end
-  
+
   file = File.new(ARGV[1], "wb")
   file.write(result)
   file.close()

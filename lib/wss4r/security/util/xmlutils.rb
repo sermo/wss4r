@@ -1,7 +1,5 @@
 require "rexml/document"
 
-include REXML
-
 class REXML::Element
 	def index_of(e)
 		return -1 if (e == nil)
@@ -21,9 +19,9 @@ class REXML::Document
 			return element
 		end
 		node_path = xpath.sub("/","").split("/")
-		
+
 		element = self
-		
+
 		node_path.each{|expr|
 			element = select_element(element, expr)
 			if (element == nil)
@@ -32,7 +30,7 @@ class REXML::Document
 		}
 		element
 	end
-	
+
 	def select_element(element, name)
 		childs = Array.new()
 		element.each_child{|child|
@@ -45,7 +43,7 @@ class REXML::Document
 		}
 		nil
 	end
-	
+
 	def element_with_attribute(key, value)
 
 	end
