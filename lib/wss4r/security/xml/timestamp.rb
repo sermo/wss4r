@@ -28,10 +28,8 @@ module WSS4R
 	def unprocess(timestamp)
           created = REXML::XPath.first(timestamp, "wsu:Created", {"wsu"=>Namespaces::WSU}).text()
           expires = REXML::XPath.first(timestamp, "wsu:Expires", {"wsu"=>Namespaces::WSU}).text()
-          created_parms = ParseDate::parsedate(created)
-          expires_parms = ParseDate::parsedate(expires)
-          @created_time = Time.gm(created_parms[0], created_parms[1],created_parms[2],created_parms[3], created_parms[4], created_parms[5])
-          @expires_time = Time.gm(expires_parms[0], expires_parms[1],expires_parms[2],expires_parms[3], expires_parms[4], expires_parms[5])
+          @created_time = Time.parse(created)
+          @expires_time = Time.parse(expires)
 	end
 
 	def verify()

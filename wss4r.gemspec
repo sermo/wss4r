@@ -70,7 +70,7 @@ WSS4R_FILES = %w{
 
 Gem::Specification.new do |s|
   s.name = "wss4r"
-  s.version = "0.5.1.sermo"
+  s.version = "0.5.2.sermo"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Roland Schmitt"]
